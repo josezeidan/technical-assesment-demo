@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Suppress Thymeleaf template engine verbose output -->
+    <logger name="org.thymeleaf" level="WARN"/>
+
+    <!-- Suppress Apache HTTP wire/header debug logs -->
+    <logger name="org.apache.http.wire" level="WARN"/>
+    <logger name="org.apache.http.headers" level="WARN"/>
+
+    <!-- Karate root logger — INFO keeps scenario output visible -->
+    <logger name="com.intuit.karate" level="${logback.level:-INFO}"/>
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

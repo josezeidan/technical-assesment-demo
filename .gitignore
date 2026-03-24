@@ -1,0 +1,32 @@
+# Build output
+target/
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# IDE - Eclipse
+.classpath
+.project
+.settings/
+
+# IDE - VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test reports (generated at runtime)
+**/target/karate-reports/
+**/target/cucumber-reports/
+**/target/surefire-reports/
+
+# Logs
+*.log
