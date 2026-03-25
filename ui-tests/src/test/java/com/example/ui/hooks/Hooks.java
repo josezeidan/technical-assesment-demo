@@ -3,8 +3,11 @@ package com.example.ui.hooks;
 import com.example.ui.context.ScenarioContext;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -31,8 +34,12 @@ public class Hooks {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown(Scenario scenario) {
         if (context.driver != null) {
+            if (scenario.isFailed()) {
+                byte[] screenshot = ((TakesScreenshot) context.driver).getScreenshotAs(OutputType.BYTES);
+                scenario.attach(screenshot, "image/png", "failure-screenshot");
+            }
             context.driver.quit();
             context.driver = null;
         }

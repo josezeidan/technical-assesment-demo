@@ -1,10 +1,10 @@
+@UB @regression
 Feature: Update Booking
 
   Background:
     * url baseUrl
     * def authCookie = 'token=' + authToken
 
-    # Create a booking to operate on
     * def newBooking =
       """
       {
@@ -13,8 +13,8 @@ Feature: Update Booking
         totalprice: 150,
         depositpaid: false,
         bookingdates: {
-          checkin: '2024-08-01',
-          checkout: '2024-08-07'
+          checkin: '2026-08-01',
+          checkout: '2026-08-07'
         },
         additionalneeds: 'Lunch'
       }
@@ -27,9 +27,8 @@ Feature: Update Booking
     Then status 200
     * def bookingId = response.bookingid
 
-  # ─── Positive Tests ───────────────────────────────────────────────────────────
-
-  Scenario: Full update (PUT) with valid token updates all fields
+  @UB-1
+  Scenario: Verify 200 and updated booking data after valid authenticated PUT request
     Given path '/booking/' + bookingId
     And header Content-Type = 'application/json'
     And header Accept = 'application/json'
@@ -42,8 +41,8 @@ Feature: Update Booking
         totalprice: 300,
         depositpaid: true,
         bookingdates: {
-          checkin: '2024-09-01',
-          checkout: '2024-09-10'
+          checkin: '2026-09-01',
+          checkout: '2026-09-10'
         },
         additionalneeds: 'Dinner'
       }
@@ -53,8 +52,13 @@ Feature: Update Booking
     And match response.firstname == 'James'
     And match response.lastname == 'Updated'
     And match response.totalprice == 300
+    And match response.depositpaid == true
+    And match response.bookingdates.checkin == '2026-09-01'
+    And match response.bookingdates.checkout == '2026-09-10'
+    And match response.additionalneeds == 'Dinner'
 
-  Scenario: Partial update (PATCH) with valid token updates specific fields
+  @UB-2
+  Scenario: Verify 200 and booking data is partially updated after valid authenticated PATCH request
     Given path '/booking/' + bookingId
     And header Content-Type = 'application/json'
     And header Accept = 'application/json'
@@ -66,8 +70,7 @@ Feature: Update Booking
     And match response.totalprice == 999
     And match response.lastname == 'Test'
 
-  # ─── Negative Tests ───────────────────────────────────────────────────────────
-
+  @UB-3
   Scenario: Full update (PUT) without auth token returns 403
     Given path '/booking/' + bookingId
     And header Content-Type = 'application/json'
@@ -88,6 +91,7 @@ Feature: Update Booking
     When method PUT
     Then status 403
 
+  @UB-4
   Scenario: Partial update (PATCH) without auth token returns 403
     Given path '/booking/' + bookingId
     And header Content-Type = 'application/json'

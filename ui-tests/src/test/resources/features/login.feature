@@ -1,3 +1,4 @@
+@LI @smoke
 Feature: Login functionality on SauceDemo
 
   @LI-1
@@ -7,18 +8,20 @@ Feature: Login functionality on SauceDemo
     Then I should be on the inventory page
     And the page title should be "Products"
 
+  @LI-2
   Scenario: Locked out user sees an error message
     Given I am on the login page
     When I log in as "locked_out_user" with password "secret_sauce"
     Then I should see login error containing "locked out"
 
+  @LI-3
   Scenario Outline: Invalid or empty credentials display the correct error
     Given I am on the login page
     When I log in as "<username>" with password "<password>"
     Then I should see login error containing "<error>"
 
     Examples:
-      | username       | password     | error                              |
-      | invalid_user   | wrong_pass   | Username and password do not match |
-      |                | secret_sauce | Username is required               |
-      | standard_user  |              | Password is required               |
+      | username      | password     | error                              |
+      | invalid_user  | wrong_pass   | Username and password do not match |
+      |               | secret_sauce | Username is required               |
+      | standard_user |              | Password is required               |

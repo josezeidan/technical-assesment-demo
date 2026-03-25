@@ -6,9 +6,13 @@ function fn() {
         env = 'qa';
     }
 
-    var config = { env: env};
+    var envConfig = karate.call('classpath:karate-config-' + env + '.js');
 
-    // Obtain auth token once for the entire suite
+    var config = {
+        env: env,
+        baseUrl: envConfig.baseUrl
+    };
+
     var authResult = karate.callSingle('classpath:com/example/api/features/auth.feature');
     config.authToken = authResult.token;
 

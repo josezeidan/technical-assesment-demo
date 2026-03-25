@@ -70,14 +70,33 @@ No additional configuration is required. ChromeDriver is downloaded automaticall
 mvn test
 ```
 
-### API Tests only
+---
 
+### API Tests
+
+#### Run the full API suite
 ```bash
 mvn test -pl api-tests
 ```
 
-#### Target environment
+#### By tag
+```bash
+# Single tag
+mvn test -pl api-tests -Dkarate.options="--tags @CB-1"
 
+# Multiple tags — OR (runs scenarios matching either tag)
+mvn test -pl api-tests -Dkarate.options="--tags @CB-1,@GB"
+
+# Multiple tags — AND (runs scenarios that have both tags)
+mvn test -pl api-tests -Dkarate.options="--tags @CB @regression"
+
+# Exclude a tag
+mvn test -pl api-tests -Dkarate.options="--tags ~@ignore"
+```
+
+Available tags: `@CB` (create booking), `@CB-1`, `@CB-2`, `@CB-3`, `@GB` (get bookings), `@regression`, `@token`
+
+#### By environment
 The default environment is `qa`. Switch with the `karate.env` system property:
 
 ```bash
@@ -88,22 +107,106 @@ mvn test -pl api-tests -Dkarate.env=prod
 
 All three environments currently point to `https://restful-booker.herokuapp.com`. Edit the corresponding file in `api-tests/src/test/resources/config/` to change a base URL.
 
-#### Parallel execution
+#### Log levels
+```bash
+# Verbose Maven output (HTTP requests, responses, step-by-step)
+mvn test -pl api-tests -X
 
+# DEBUG — detailed Karate internals via Logback
+mvn test -pl api-tests -Dlogback.level=DEBUG
+
+# INFO — standard run output (default)
+mvn test -pl api-tests -Dlogback.level=INFO
+
+# WARN — suppress info, show warnings and errors only
+mvn test -pl api-tests -Dlogback.level=WARN
+```
+
+#### Combined — tag + environment + log level
+```bash
+mvn test -pl api-tests -Dkarate.options="--tags @CB-1" -Dkarate.env=qa -Dlogback.level=DEBUG
+```
+
+#### Parallel execution
 Tests run in parallel across **5 threads** by default (configured in `ApiTestRunner.java`).
 
-### UI Tests only
+---
 
+### UI Tests
+
+#### Run the full UI suite
 ```bash
+# Run tests + generate HTML report
+mvn verify -pl ui-tests
+
+# Run tests only (no report generated)
 mvn test -pl ui-tests
 ```
 
-#### Headed / headless browser
+#### By tag
+```bash
+# Single tag
+mvn verify -pl ui-tests -Dcucumber.filter.tags="@LI-1"
 
+# Multiple tags — OR
+mvn verify -pl ui-tests -Dcucumber.filter.tags="@LI-1 or @purchase"
+
+# Multiple tags — AND
+mvn verify -pl ui-tests -Dcucumber.filter.tags="@LI-1 and @smoke"
+
+# Exclude a tag
+mvn verify -pl ui-tests -Dcucumber.filter.tags="not @ignore"
+```
+
+#### Headed / headless browser
 Tests run **headless** by default. To open a visible Chrome window:
 
 ```bash
-mvn test -pl ui-tests -Dheadless=false
+mvn verify -pl ui-tests -Dheadless=false
+```
+
+#### Log levels
+```bash
+# Verbose Maven output
+mvn verify -pl ui-tests -X
+
+# DEBUG — full Selenium and Cucumber logging
+mvn verify -pl ui-tests -Dlogback.level=DEBUG
+
+# INFO — standard output (default)
+mvn verify -pl ui-tests -Dlogback.level=INFO
+
+# WARN — errors and warnings only
+mvn verify -pl ui-tests -Dlogback.level=WARN
+```
+
+#### Combined — tag + headed + log level
+```bash
+mvn verify -pl ui-tests -Dcucumber.filter.tags="@LI-1" -Dheadless=false -Dlogback.level=DEBUG
+```
+
+---
+
+### Useful utility commands
+
+```bash
+# Skip tests and just compile both modules
+mvn compile -pl api-tests,ui-tests
+
+# Clean build artifacts before running
+mvn clean test
+
+# Clean and run a specific module
+mvn clean test -pl api-tests
+
+# Resolve and download all dependencies without running tests
+mvn dependency:resolve
+
+# View the full dependency tree
+mvn dependency:tree
+
+# Skip tests entirely (compile only)
+mvn install -DskipTests
 ```
 
 ---
@@ -113,9 +216,11 @@ mvn test -pl ui-tests -Dheadless=false
 | Module | Report location |
 |--------|----------------|
 | api-tests | `api-tests/target/karate-reports/karate-summary.html` |
-| ui-tests | `ui-tests/target/cucumber-reports/report.html` |
+| ui-tests | `ui-tests/target/cucumber-html-reports/overview-features.html` |
 
 Open either HTML file in a browser after a test run.
+
+> **Note:** UI reports are generated in the `verify` phase. Use `mvn verify -pl ui-tests` instead of `mvn test` to produce the HTML report with screenshots.
 
 ---
 

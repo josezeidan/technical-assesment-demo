@@ -33,7 +33,8 @@ public class CheckoutStepOnePage extends BasePage {
         setReactInputValue("first-name", firstName);
         setReactInputValue("last-name", lastName);
         setReactInputValue("postal-code", postalCode);
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("continue"))).click();
+        WebElement continueBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("continue")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", continueBtn);
         wait.until(ExpectedConditions.urlContains("checkout-step-two"));
         return new CheckoutStepTwoPage(driver);
     }

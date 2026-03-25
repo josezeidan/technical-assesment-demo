@@ -1,4 +1,3 @@
-
 @token
 Feature: Authentication
 

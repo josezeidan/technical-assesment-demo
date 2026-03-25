@@ -1,9 +1,11 @@
 package com.example.ui.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,9 +39,13 @@ public class InventoryPage extends BasePage {
     }
 
     public void addItemToCartByName(String itemName) {
-        String xpath = "//div[contains(@class,'inventory_item_name')][normalize-space(text())='" + itemName
+        String addXpath = "//div[contains(@class,'inventory_item_name')][normalize-space(text())='" + itemName
                 + "']/ancestor::div[contains(@class,'inventory_item')]//button[contains(@data-test,'add-to-cart')]";
-        driver.findElement(By.xpath(xpath)).click();
+        String removeXpath = "//div[contains(@class,'inventory_item_name')][normalize-space(text())='" + itemName
+                + "']/ancestor::div[contains(@class,'inventory_item')]//button[contains(@data-test,'remove')]";
+        WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(addXpath)));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addButton);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(removeXpath)));
     }
 
     public int getCartItemCount() {
@@ -51,7 +57,8 @@ public class InventoryPage extends BasePage {
     }
 
     public CartPage goToCart() {
-        cartIcon.click();
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", cartIcon);
+        wait.until(ExpectedConditions.urlContains("cart"));
         return new CartPage(driver);
     }
 }
