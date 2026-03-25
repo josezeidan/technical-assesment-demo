@@ -5,6 +5,7 @@ Feature: Get Bookings
     * url baseUrl
     * def validBookingResponseSchema = read('this:../testData/bookingResponseSchema.json')
     * def getBookingResponseSchema = read('this:../testData/getBookingResponseSchema.json')
+    * configure matchEachEmptyAllowed = true
 
   @setup=bookingIDs
   Scenario: Setup
